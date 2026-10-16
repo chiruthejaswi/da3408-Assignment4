@@ -1,0 +1,62 @@
+# Alerting rules. Per the assignment's Code of Conduct, AI-generated PromQL is
+# annotated with the prompt used. Replace the "Prompt:" lines with your own
+# actual prompts if you re-generate any of these.
+groups:
+  - name: captioning_app
+    rules:
+      - alert: CaptioningAppDown
+        # Prompt: "PromQL alert that fires when the scrape target for job captioning_app is down for 15s"
+        expr: up{job="captioning_app"} == 0
+        for: 15s
+        labels: {severity: critical}
+        annotations:
+          summary: "Captioning app is DOWN"
+          description: "Prometheus cannot scrape {{ $labels.instance }} (job {{ $labels.job }})."
+
+      - alert: HighInferenceLatencyP95
+        # Prompt: "PromQL for p95 inference latency over 5m from a histogram caption_inference_duration_seconds, alert if > 8s"
+        expr: |
+          histogram_quantile(0.95,
+            sum by (le) (rate(caption_inference_duration_seconds_bucket[5m]))) > 8
+        for: 1m
+        labels: {severity: warning}
+        annotations:
+          summary: "p95 inference latency above 8 s"
+          description: "p95 = {{ $value | humanizeDuration }} over the last 5 minutes."
+
+      - alert: HighErrorRatio
+        # Prompt: "PromQL error ratio of images processed from counter caption_images_processed_total with status label, alert above 10%"
+        expr: |
+          sum(rate(caption_images_processed_total{status="error"}[5m]))
+            / sum(rate(caption_images_processed_total[5m])) > 0.10
+        for: 1m
+        labels: {severity: warning}
+        annotations:
+          summary: "More than 10% of images are failing"
+
+      - alert: TooManyActiveRequests
+        expr: sum(caption_active_requests) > 3
+        for: 30s
+        labels: {severity: warning}
+        annotations:
+          summary: "More than 3 requests are in flight on a CPU-only box"
+
+  - name: system
+    rules:
+      - alert: NodeHighCPU
+        # Prompt: "PromQL for overall CPU utilisation percent from node_exporter node_cpu_seconds_total, alert above 85% for 1m"
+        expr: |
+          100 * (1 - avg(rate(node_cpu_seconds_total{mode="idle"}[1m]))) > 85
+        for: 1m
+        labels: {severity: warning}
+        annotations:
+          summary: "System CPU above 85%"
+
+      - alert: NodeHighMemory
+        # Prompt: "PromQL memory used percent from node_memory_MemAvailable_bytes and node_memory_MemTotal_bytes, alert above 90%"
+        expr: |
+          100 * (1 - node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes) > 90
+        for: 1m
+        labels: {severity: critical}
+        annotations:
+          summary: "System memory above 90%"

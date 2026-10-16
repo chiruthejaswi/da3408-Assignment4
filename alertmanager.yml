@@ -1,0 +1,14 @@
+route:
+  receiver: local-webhook
+  group_by: [alertname]
+  group_wait: 5s
+  group_interval: 30s
+  repeat_interval: 5m
+
+receivers:
+  - name: local-webhook
+    webhook_configs:
+      # alert_receiver.py (runs on the host) just prints incoming alerts.
+      # Swap for Slack / email later if you like.
+      - url: http://host.docker.internal:5001/alert
+        send_resolved: true
