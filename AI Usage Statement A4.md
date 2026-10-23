@@ -16,5 +16,4 @@ All PromQL in the dashboard and in `alert_rules.yml`  was drafted by Claude. The
 - `mode=~"user|system|iowait"` (CPU-by-mode panel)
 - `device!~"lo|veth.*|docker.*|br-.*"` (network panels)
 
-## Verification of the AI's work
-I worked through the calculations for the key queries (rate, histogram_quantile p95, Summary mean, error ratio, CPU utilisation) by hand using the examples in `promql_notes.md`
+
