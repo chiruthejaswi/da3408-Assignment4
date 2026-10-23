@@ -20,8 +20,6 @@ services:
     ports: ["9100:9100"]
     volumes: ["/:/host:ro,rslave"]
     command: ["--path.rootfs=/host"]
-    # Linux only for true host metrics. On macOS/Windows install node_exporter /
-    # windows_exporter natively and point prometheus.yml at host.docker.internal:9100.
 
   grafana:
     image: grafana/grafana:latest
