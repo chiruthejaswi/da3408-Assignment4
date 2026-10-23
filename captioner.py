@@ -1,5 +1,3 @@
-"""Model wrapper. Real BLIP on CPU by default; CAPTION_MOCK=1 gives a fake model
-so you can develop the dashboard without downloading ~1GB of weights."""
 import os
 import random
 import time
@@ -8,7 +6,7 @@ from PIL import Image
 
 MODEL_NAME = os.getenv("CAPTION_MODEL", "Salesforce/blip-image-captioning-base")
 MOCK = os.getenv("CAPTION_MOCK", "0") == "1"
-MAX_SIDE = int(os.getenv("MAX_IMAGE_SIDE", "512"))  # downscale to keep CPU latency sane
+MAX_SIDE = int(os.getenv("MAX_IMAGE_SIDE", "512"))  
 
 
 class MockCaptioner:
